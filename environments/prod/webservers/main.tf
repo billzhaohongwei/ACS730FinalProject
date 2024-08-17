@@ -12,7 +12,7 @@ data "terraform_remote_state" "remoteState" { // This is to use Outputs from Rem
   }
 }
 
-# reference the webserver module
+# reference the security group module
 module "securityGroup" {
   source = "../../../modules/aws_sg"
 
@@ -23,6 +23,29 @@ module "securityGroup" {
   vpcId       = data.terraform_remote_state.remoteState.outputs.vpcId
   //  s3BucketName = var.s3BucketName
   //  s3ObjKeyname = var.s3ObjKeyname
+
+
+  /*
+>>>>>>>>> local version
+  instance_type  = var.instance_type
+  key_name       = var.key_name
+  */
+}
+
+# reference the webserver module
+module "webServer" {
+  source = "../../../modules/aws_webservers"
+
+  # pass arguments
+  prefix           = var.prefix
+  env              = var.env
+  defaultTags      = var.defaultTags
+  instanceType     = var.instanceType
+  keyName          = var.keyName
+  webServerSgId    = module.securityGroup.webServerSgId
+  vmSgId           = module.securityGroup.vmSgId
+  publicSubnetIds  = data.terraform_remote_state.remoteState.outputs.publicSubnetId
+  privateSubnetIds = data.terraform_remote_state.remoteState.outputs.privateSubnetId
 
 
   /*

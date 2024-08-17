@@ -10,12 +10,13 @@ data "terraform_remote_state" "remote_state" { // This is to use Outputs from Re
 }
 */
 
-# Security Group of Bastion
-resource "aws_security_group" "bastionSg" {
-  name        = "allow_ssh_bastion"
-  description = "Allow http and ssh inbound traffic"
+# Security Group of vm in private subnet
+resource "aws_security_group" "vmSg" {
+  name        = "allow_ssh_vm"
+  description = "Allow ssh inbound traffic"
   vpc_id      = var.vpcId
 
+  /*
   ingress {
     description      = "HTTP from everywhere"
     from_port        = 80
@@ -24,6 +25,7 @@ resource "aws_security_group" "bastionSg" {
     cidr_blocks      = ["0.0.0.0/0"]
     ipv6_cidr_blocks = ["::/0"]
   }
+*/
 
   ingress {
     description      = "SSH from everywhere"
@@ -45,12 +47,12 @@ resource "aws_security_group" "bastionSg" {
 
   tags = merge(var.defaultTags,
     {
-      "Name" = "${var.prefix}-${var.env}-Bastion-Sg"
+      "Name" = "${var.prefix}-${var.env}-PrivateVM-Sg"
     }
   )
 }
 
-# Security Group for web server
+# Security Group for web server in public subnet
 resource "aws_security_group" "webSg" {
   name        = "allow_ssh_webserver"
   description = "Allow http and ssh inbound traffic"

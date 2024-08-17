@@ -1,8 +1,8 @@
 # Output public IP of EC2 instance
 
-output "bastionSgId" {
-  value       = module.securityGroup.bastionSgId
-  description = "The ID of the bastion security group"
+output "vmSgId" {
+  value       = module.securityGroup.vmSgId
+  description = "The ID of the private vm's security group"
 }
 
 output "webServerSgId" {

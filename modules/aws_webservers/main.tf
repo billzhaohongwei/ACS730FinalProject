@@ -17,7 +17,7 @@ data "aws_ami" "latest_amazon_linux" {
 data "aws_availability_zones" "available" {
   state = "available"
 }
-
+/*
 # Use remote state to retrieve the data from state file of networking
 data "terraform_remote_state" "remote_state" { // This is to use Outputs from Remote State
   backend = "s3"
@@ -27,80 +27,108 @@ data "terraform_remote_state" "remote_state" { // This is to use Outputs from Re
     region = "us-east-1"        // Region where bucket created
   }
 }
-
+*/
 # Define tags locally
 locals {
-  default_tags = merge(var.default_tags, { "env" = var.env })
+  default_tags = merge(var.defaultTags, { "Env" = var.env })
   name_prefix  = "${var.prefix}-${var.env}"
 }
 
 # Adding SSH key to Amazon EC2
-resource "aws_key_pair" "web_key" {
-  key_name   = var.key_name
-  public_key = file("${var.key_name}.pub")
+resource "aws_key_pair" "webKey" {
+  key_name   = var.keyName
+  public_key = file("${var.keyName}.pub")
 }
 
-# Create VM1 in public subnet 2 as displayed in Architecture Diagram
-resource "aws_instance" "public1_vm" {
+# Create VM1 in public subnet 1 as displayed in Architecture Diagram
+resource "aws_instance" "webServer1" {
   ami                         = data.aws_ami.latest_amazon_linux.id
-  instance_type               = lookup(var.instance_type, var.env)
-  key_name                    = aws_key_pair.web_key.key_name
-  subnet_id                   = data.terraform_remote_state.remote_state.outputs.public_subnet_id[0]
+  instance_type               = lookup(var.instanceType, var.env)
+  key_name                    = aws_key_pair.webKey.key_name
+  subnet_id                   = var.publicSubnetIds[0]
   associate_public_ip_address = true
-  vpc_security_group_ids      = [aws_security_group.bastion_sg.id]
-  tags = merge(local.default_tags,
-    {
-      "Name" = "${var.prefix}-nonprod-public1-vm"
-    }
-  )
-}
-
-# Create bastion VM in public subnet 1
-resource "aws_instance" "bastion" {
-  ami                         = data.aws_ami.latest_amazon_linux.id
-  instance_type               = lookup(var.instance_type, var.env)
-  key_name                    = aws_key_pair.web_key.key_name
-  subnet_id                   = data.terraform_remote_state.remote_state.outputs.public_subnet_id[1]
-  associate_public_ip_address = true
-  vpc_security_group_ids      = [aws_security_group.bastion_sg.id]
-  #  user_data                   = file("${path.root}/install_httpd.sh")
-  tags = merge(local.default_tags,
-    {
-      "Name" = "${var.prefix}-nonprod-BastionVM"
-    }
-  )
-}
-
-# deploy VM1 and VM2 into private subnets of nonprod VPC
-resource "aws_instance" "webserver" {
-  count                       = data.terraform_remote_state.remote_state.outputs.nonprod_private_subnet_count
-  ami                         = data.aws_ami.latest_amazon_linux.id
-  instance_type               = lookup(var.instance_type, var.env)
-  key_name                    = aws_key_pair.web_key.key_name
-  subnet_id                   = data.terraform_remote_state.remote_state.outputs.nonprod_private_subnet_id[count.index]
-  associate_public_ip_address = false
-  vpc_security_group_ids      = [aws_security_group.web_sg_nonprod.id]
+  vpc_security_group_ids      = [var.webServerSgId]
   user_data                   = file("${path.root}/install_httpd.sh")
   tags = merge(local.default_tags,
     {
-      "Name" = "${var.prefix}-nonprod-webserver-${count.index + 1}"
+      "Name" = "${var.prefix}-${var.env}-Webserver1"
     }
   )
 }
 
-# deploy another 2 VMs into private subnets of prod VPC
-resource "aws_instance" "prod_vm" {
-  count                       = data.terraform_remote_state.remote_state.outputs.prod_private_subnet_count
+# Create VM2 in public subnet 2 as displayed in Architecture Diagram
+resource "aws_instance" "webServer2" {
   ami                         = data.aws_ami.latest_amazon_linux.id
-  instance_type               = lookup(var.instance_type, var.env)
-  key_name                    = aws_key_pair.web_key.key_name
-  subnet_id                   = data.terraform_remote_state.remote_state.outputs.prod_private_subnet_id[count.index]
-  associate_public_ip_address = false
-  vpc_security_group_ids      = [aws_security_group.web_sg_prod.id]
-  #  user_data                   = file("${path.root}/install_httpd.sh")
+  instance_type               = lookup(var.instanceType, var.env)
+  key_name                    = aws_key_pair.webKey.key_name
+  subnet_id                   = var.publicSubnetIds[1]
+  associate_public_ip_address = true
+  vpc_security_group_ids      = [var.webServerSgId]
+  user_data                   = file("${path.root}/install_httpd.sh")
   tags = merge(local.default_tags,
     {
-      "Name" = "${var.prefix}-prod_vm-${count.index + 1}"
+      "Name" = "${var.prefix}-${var.env}-Webserver2"
+    }
+  )
+}
+
+# Create VM1 in public subnet 2 as displayed in Architecture Diagram
+resource "aws_instance" "webServer3" {
+  ami                         = data.aws_ami.latest_amazon_linux.id
+  instance_type               = lookup(var.instanceType, var.env)
+  key_name                    = aws_key_pair.webKey.key_name
+  subnet_id                   = var.publicSubnetIds[2]
+  associate_public_ip_address = true
+  vpc_security_group_ids      = [var.webServerSgId]
+  tags = merge(local.default_tags,
+    {
+      "Name" = "${var.prefix}-${var.env}-Webserver3"
+    }
+  )
+}
+
+# Create VM1 in public subnet 2 as displayed in Architecture Diagram
+resource "aws_instance" "webServer4" {
+  ami                         = data.aws_ami.latest_amazon_linux.id
+  instance_type               = lookup(var.instanceType, var.env)
+  key_name                    = aws_key_pair.webKey.key_name
+  subnet_id                   = var.publicSubnetIds[3]
+  associate_public_ip_address = true
+  vpc_security_group_ids      = [var.webServerSgId]
+  tags = merge(local.default_tags,
+    {
+      "Name" = "${var.prefix}-${var.env}-Webserver4"
+    }
+  )
+}
+
+# Create VM5 in private subnet 1
+resource "aws_instance" "webserver5" {
+  ami                         = data.aws_ami.latest_amazon_linux.id
+  instance_type               = lookup(var.instanceType, var.env)
+  key_name                    = aws_key_pair.webKey.key_name
+  subnet_id                   = var.privateSubnetIds[0]
+  associate_public_ip_address = false
+  vpc_security_group_ids      = [var.vmSgId]
+  user_data                   = file("${path.root}/install_httpd.sh")
+  tags = merge(local.default_tags,
+    {
+      "Name" = "${var.prefix}-${var.env}-Webserver5"
+    }
+  )
+}
+
+# Create VM6 in private subnet 2
+resource "aws_instance" "webserver6" {
+  ami                         = data.aws_ami.latest_amazon_linux.id
+  instance_type               = lookup(var.instanceType, var.env)
+  key_name                    = aws_key_pair.webKey.key_name
+  subnet_id                   = var.privateSubnetIds[1]
+  associate_public_ip_address = false
+  vpc_security_group_ids      = [var.vmSgId]
+  tags = merge(local.default_tags,
+    {
+      "Name" = "${var.prefix}-${var.env}-Webserver6"
     }
   )
 }

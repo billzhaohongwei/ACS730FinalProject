@@ -5,15 +5,39 @@ variable "vpcId" {
   description = "VPC ID"
 }
 
-
 # Instance Type
-variable "instance_type" {
+variable "instanceType" {
   default = {
-    "prod"    = "t3.micro"
-    "nonprod" = "t2.micro"
+    "Prod"    = "t2.micro"
+    "Dev"     = "t2.micro"
+    "Staging" = "t2.micro"
   }
   type        = map(string)
   description = "Type of EC2 instance"
+}
+
+variable "publicSubnetIds" {
+  default     = []
+  description = "List of public subnet IDs"
+  type        = list(string)
+}
+
+variable "privateSubnetIds" {
+  default     = []
+  description = "List of private subnet IDs"
+  type        = list(string)
+}
+
+variable "vmSgId" {
+  default     = ""
+  type        = string
+  description = "private subnet vm's security group ID"
+}
+
+variable "webServerSgId" {
+  default     = ""
+  type        = string
+  description = "public web server security group ID"
 }
 
 # Default Tags
@@ -42,7 +66,7 @@ variable "env" {
 
 
 #variable to declare keyname
-variable "key_name" {
+variable "keyName" {
   default     = "final"
   type        = string
   description = "SSH key pair's name"

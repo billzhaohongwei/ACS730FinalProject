@@ -1,14 +1,33 @@
 # Instance Type
-variable "instance_type" {
+variable "instanceType" {
   default = {
   }
   type        = map(string)
   description = "Type of EC2 instance"
 }
 
+variable "publicSubnetIds" {
+  description = "List of public subnet IDs"
+  type        = list(string)
+}
+
+variable "privateSubnetIds" {
+  description = "List of private subnet IDs"
+  type        = list(string)
+}
+
+variable "vmSgId" {
+  type        = string
+  description = "private vm's security group ID"
+}
+
+variable "webServerSgId" {
+  type        = string
+  description = "public web server security group ID"
+}
 
 # Default Tags
-variable "default_tags" {
+variable "defaultTags" {
   default = {
   }
   type        = map(any)
@@ -29,19 +48,18 @@ variable "env" {
 
 
 #variable to declare keyname
-variable "key_name" {
+variable "keyName" {
   type        = string
   description = "SSH key pair's name"
 }
 
-variable "s3_bucket_name" {
-  #  default     = "acs730-lab4-hongwei"
+/*
+variable "s3BucketName" {
   type        = string
   description = "S3 bucket name for remote state to use"
 }
-variable "s3_obj_keyname" {
-  #  default     = "dev/network/terraform.tfstate"
+variable "s3ObjKeyname" {
   type        = string
   description = "S3 object key name for remote state to use"
 }
-
+*/
