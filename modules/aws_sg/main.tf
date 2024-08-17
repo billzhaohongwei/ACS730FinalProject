@@ -1,8 +1,20 @@
+# Use remote state to retrieve the data from state file of networking
+/*
+data "terraform_remote_state" "remote_state" { // This is to use Outputs from Remote State
+  backend = "s3"
+  config = {
+    bucket = var.s3BucketName // Bucket from where to GET Terraform State
+    key    = var.s3ObjKeyname // Object name in the bucket to GET Terraform State
+    region = "us-east-1"      // Region where bucket created
+  }
+}
+*/
+
 # Security Group of Bastion
 resource "aws_security_group" "bastionSg" {
   name        = "allow_ssh_bastion"
   description = "Allow http and ssh inbound traffic"
-  vpc_id      = data.terraform_remote_state.remote_state.outputs.vpcId
+  vpc_id      = var.vpcId
 
   ingress {
     description      = "HTTP from everywhere"
@@ -31,7 +43,7 @@ resource "aws_security_group" "bastionSg" {
     ipv6_cidr_blocks = ["::/0"]
   }
 
-  tags = merge(local.default_tags,
+  tags = merge(var.defaultTags,
     {
       "Name" = "${var.prefix}-${var.env}-Bastion-Sg"
     }
@@ -42,7 +54,7 @@ resource "aws_security_group" "bastionSg" {
 resource "aws_security_group" "webSg" {
   name        = "allow_ssh_webserver"
   description = "Allow http and ssh inbound traffic"
-  vpc_id      = data.terraform_remote_state.remote_state.outputs.vpcId
+  vpc_id      = var.vpcId
 
   ingress {
     description      = "HTTP from everywhere"
@@ -71,7 +83,7 @@ resource "aws_security_group" "webSg" {
     ipv6_cidr_blocks = ["::/0"]
   }
 
-  tags = merge(local.default_tags,
+  tags = merge(var.defaultTags,
     {
       "Name" = "${var.prefix}-${var.env}-Webserver-Sg"
     }

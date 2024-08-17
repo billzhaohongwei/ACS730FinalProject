@@ -1,5 +1,8 @@
 #Terraform
 /.terraform/
 *.tfstate
-*.tfstate.backup
+*.tfstate.*
+
+# Ignore the .terraform directory and lock file
+.terraform/
 .terraform.lock.hcl

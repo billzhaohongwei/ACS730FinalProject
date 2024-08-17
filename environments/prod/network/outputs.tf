@@ -1,4 +1,4 @@
-# Output Non Prod VPC ID
+# Output VPC ID
 output "vpcId" {
   value = module.my_module.vpcId
 }
@@ -8,7 +8,7 @@ output "publicSubnetId" {
   value = module.my_module.publicSubnetId
 }
 
-# Output Non Prod private subnet ID
+# Output private subnet ID
 output "privateSubnetId" {
   value = module.my_module.privateSubnetId
 }
