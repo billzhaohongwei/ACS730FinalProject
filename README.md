@@ -21,12 +21,15 @@ ansible-playbook -i aws_ec2.yaml  playbook.yaml
 # Now we can start testing the webservers and Bastion
 # Check connection from Bastion to VM5 and 6 in private subnets
 cd -
+# We can get the public IP of final-Prod-Webserver2 (bastion) in AWS management console, or through output of webserver deployment.
 scp -i final final ec2-user@<public_ip_of_bastion>:~/.ssh/
 ssh -i final ec2-user@<public_ip_of_bastion>
+# get the private IP of final-Prod-Webserver5 via AWS management console
 ssh -i ~/.ssh/final ec2-user@<webserver5_private_ip>
 sudo systemctl status httpd
 curl localhost
 exit
+# get the private IP of final-Prod-Webserver6 via AWS management console
 ssh -i ~/.ssh/final ec2-user@<webserver6_private_ip>
 exit
 exit
