@@ -10,6 +10,16 @@ output "webServerSgId" {
   description = "The ID of the webserver security group"
 }
 
+output "elbSgId" {
+  value       = module.securityGroup.elbSgId
+  description = "The ID of the elb's security group"
+}
+
+output "elbDnsName" {
+  description = "The DNS name of the load balancer."
+  value       = module.elasticLoadBalancer.elbDnsName
+}
+
 # Output public IP of EC2 instance
 /*
 output "public_ip" {

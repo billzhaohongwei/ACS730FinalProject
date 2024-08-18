@@ -9,3 +9,8 @@ output "webServerSgId" {
   value       = aws_security_group.webSg.id
   description = "The ID of the public webserver security group"
 }
+
+output "elbSgId" {
+  value       = aws_security_group.elbSg.id
+  description = "The ID of the elb's security group"
+}

@@ -28,6 +28,18 @@ variable "privateSubnetIds" {
   type        = list(string)
 }
 
+variable "elbSubnetIds" {
+  default     = []
+  description = "A list of subnet IDs to attach to the load balancer."
+  type        = list(string)
+}
+
+variable "elbInstanceIds" {
+  default     = []
+  description = "A list of instance IDs to attach to the load balancer."
+  type        = list(string)
+}
+
 variable "vmSgId" {
   default     = ""
   type        = string
@@ -38,6 +50,12 @@ variable "webServerSgId" {
   default     = ""
   type        = string
   description = "public web server security group ID"
+}
+
+variable "elbSgId" {
+  default     = ""
+  type        = string
+  description = "elastic load balancer security group ID"
 }
 
 # Default Tags

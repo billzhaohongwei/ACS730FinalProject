@@ -46,11 +46,18 @@ module "webServer" {
   vmSgId           = module.securityGroup.vmSgId
   publicSubnetIds  = data.terraform_remote_state.remoteState.outputs.publicSubnetId
   privateSubnetIds = data.terraform_remote_state.remoteState.outputs.privateSubnetId
+}
 
+# reference the load balancer module
+module "elasticLoadBalancer" {
+  source = "../../../modules/aws_elb"
 
-  /*
->>>>>>>>> local version
-  instance_type  = var.instance_type
-  key_name       = var.key_name
-  */
+  # pass arguments
+  vpcId          = data.terraform_remote_state.remoteState.outputs.vpcId
+  elbSubnetIds   = data.terraform_remote_state.remoteState.outputs.elbSubnetIds
+  elbSgId        = module.securityGroup.elbSgId
+  elbInstanceIds = module.webServer.elbInstanceIds
+  defaultTags    = var.defaultTags
+  prefix         = var.prefix
+  env            = var.env
 }

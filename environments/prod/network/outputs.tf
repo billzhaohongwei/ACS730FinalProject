@@ -21,3 +21,7 @@ output "publicSubnetCount" {
 output "privateSubnetCount" {
   value = module.my_module.privateSubnetCount
 }
+
+output "elbSubnetIds" {
+  value = module.my_module.elbSubnetIds
+}

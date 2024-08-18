@@ -91,3 +91,37 @@ resource "aws_security_group" "webSg" {
     }
   )
 }
+
+# Security Group for web server in public subnet
+resource "aws_security_group" "elbSg" {
+  name        = "allow_http_https_elb"
+  description = "Allow http and https inbound traffic"
+  vpc_id      = var.vpcId
+
+  ingress {
+    from_port   = 80
+    to_port     = 80
+    protocol    = "tcp"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+
+  ingress {
+    from_port   = 443
+    to_port     = 443
+    protocol    = "tcp"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+
+  egress {
+    from_port   = 0
+    to_port     = 0
+    protocol    = "-1"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+
+  tags = merge(var.defaultTags,
+    {
+      "Name" = "${var.prefix}-${var.env}-Elb-Sg"
+    }
+  )
+}
