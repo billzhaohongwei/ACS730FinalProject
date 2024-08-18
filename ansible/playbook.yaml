@@ -1,0 +1,59 @@
+---
+- hosts: tag_Ansible
+  gather_facts: True
+  become: yes
+  
+  vars:
+    source_file: ./index.html
+    dest_file: /var/www/html
+    source_image: ./files/Seneca.png
+    dest_image: /var/www/html/static/images
+   
+
+  tasks:
+    - name: Install Apache Web Server for RPM
+      yum: name=httpd state=latest
+  
+    - name: Deploy index.html template
+      template: 
+        src: "{{ source_file }}"
+        dest: "{{ dest_file }}"
+        mode: 0555
+      notify: Restart Httpd
+  
+    - name: Start Apache Web Server
+      service: name=httpd state=started enabled=yes
+        
+    - name: Create images directory on webserver
+      file:
+        path: "{{dest_image}}"
+        state: directory
+
+    - name: Copy image to webserver
+      copy: src={{ source_image }} dest={{ dest_image }}
+        
+    - name: Print Linux Family
+      debug: var=ansible_os_family
+      
+    - shell: /usr/bin/uptime
+      register: result
+      
+    - name: Print result variable
+      debug: 
+        var: result
+    
+    - name: Print debug message
+      debug: 
+        msg: "The result was {{ result }}"
+      
+    
+  handlers:
+  - name: Restart Httpd
+    service: name=httpd state=restarted
+    when: ansible_os_family == "RedHat"
+    
+  - name: Restart Apache2
+    service: name=apache2 state=restarted
+    when: ansible_os_family == "Debian"
+    
+    

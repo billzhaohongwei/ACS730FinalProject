@@ -83,6 +83,7 @@ resource "aws_instance" "webServer3" {
   tags = merge(local.default_tags,
     {
       "Name" = "${var.prefix}-${var.env}-Webserver3"
+      "Role" = "Ansible"
     }
   )
 }
@@ -98,6 +99,7 @@ resource "aws_instance" "webServer4" {
   tags = merge(local.default_tags,
     {
       "Name" = "${var.prefix}-${var.env}-Webserver4"
+      "Role" = "Ansible"
     }
   )
 }

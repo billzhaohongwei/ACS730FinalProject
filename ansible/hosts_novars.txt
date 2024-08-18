@@ -1,0 +1,6 @@
+[linux]
+linux1 ansible_host=54.160.168.143 owner=Hongwei
+linux2 ansible_host=35.168.32.46 owner=Hongwei
+
+[servers_all:children]
+linux
