@@ -105,7 +105,7 @@ resource "aws_instance" "webServer4" {
 }
 
 # Create VM5 in private subnet 1
-resource "aws_instance" "webserver5" {
+resource "aws_instance" "webServer5" {
   ami                         = data.aws_ami.latest_amazon_linux.id
   instance_type               = lookup(var.instanceType, var.env)
   key_name                    = aws_key_pair.webKey.key_name
@@ -121,7 +121,7 @@ resource "aws_instance" "webserver5" {
 }
 
 # Create VM6 in private subnet 2
-resource "aws_instance" "webserver6" {
+resource "aws_instance" "webServer6" {
   ami                         = data.aws_ami.latest_amazon_linux.id
   instance_type               = lookup(var.instanceType, var.env)
   key_name                    = aws_key_pair.webKey.key_name
@@ -135,3 +135,23 @@ resource "aws_instance" "webserver6" {
   )
 }
 
+/*
+# Local-exec provisioner to copy images to web server 1 and 2
+resource "null_resource" "copy_Images" {
+  provisioner "local-exec" {
+    command = <<EOT
+      # Copy images to webServer1
+      scp -i ${var.keyName} ./Seneca.png ec2-user@${aws_instance.webServer1.public_ip}:/var/www/html/static/images/Seneca.png
+      scp -i ${var.keyName} ./Seneca2.jpg ec2-user@${aws_instance.webServer1.public_ip}:/var/www/html/static/images/Seneca2.jpg
+
+      # Copy images to webServer2
+      scp -i ${var.keyName} ./Seneca.png ec2-user@${aws_instance.webServer2.public_ip}:/var/www/html/static/images/Seneca.png
+      scp -i ${var.keyName} ./Seneca2.jpg ec2-user@${aws_instance.webServer2.public_ip}:/var/www/html/static/images/Seneca2.jpg
+
+
+    EOT
+  }
+
+  depends_on = [aws_instance.webServer1, aws_instance.webServer2]
+}
+*/
